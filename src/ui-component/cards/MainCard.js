@@ -62,14 +62,14 @@ const MainCard = forwardRef(
               ) : (
                 <Typography variant="h3">
                   {title}&nbsp;
-                  {others?.summaryObject?.balance && (
+                  {others?.summary?.balance && (
                     <Chip
-                      color={others?.summaryObject?.balance > 0 ? 'success' : 'error'}
+                      color={others?.summary?.balance > 0 ? 'success' : 'error'}
                       sx={{
                         fontSize: '1rem',
                         fontWeight: 'bold'
                       }}
-                      label={`₹  ${others?.summaryObject?.balance?.toFixed(2)}`}
+                      label={`₹  ${others?.summary?.balance?.toFixed(2)}`}
                       variant="outlined"
                       // icon={<IconCurrencyRupee />}
                     />
@@ -82,7 +82,7 @@ const MainCard = forwardRef(
         )}
         {/* content & header divider */}
 
-        {transaction && <TransactionSummary summaryObject={others?.summaryObject} />}
+        {transaction && <TransactionSummary summary={others?.summary} />}
 
         {/* card content */}
         {content && (

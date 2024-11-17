@@ -15,24 +15,15 @@ import NewTransaction from './NewTransaction';
 import { CustomHeader } from 'views/utilities/CustomeTableHeader';
 import TransactionDeleteDialog from './TransactionDeleteDialog';
 import TransactionModal from './TransactionModal';
+import { IconSquareRoundedCheck, IconAlertCircle } from '@tabler/icons-react';
+
 // ==============================|| EXPENSE ||============================== //
 
 export default function TransactionData({ current_month = false }) {
-  const { transactionDetails, fetchTransaction, deleteRestoreTransaction, deleteDialog, setDeleteDialog, totalAmount } =
+  const { transactionDetails, fetchTransaction, deleteRestoreTransaction, deleteDialog, setDeleteDialog, summary } =
     useContext(TransactionContext);
   const [tranId, setTransactionId] = useState({});
   const { setDialogOpen } = React.useContext(TransactionContext);
-
-  const summaryObject = {
-    balance: totalAmount,
-    expense: 1020,
-    previousPending: 1030,
-    pending: 14030,
-    paid: 1030,
-    income: 1400,
-    emi: 1020,
-    investment: 1020
-  };
 
   const onDeleteButton = (row) => {
     console.log(row);
@@ -55,6 +46,26 @@ export default function TransactionData({ current_month = false }) {
       valueFormatter: (params) => params?.toUpperCase()
     },
     {
+      field: 'status',
+      headerName: 'Status',
+      // sortable: false,
+      width: 150,
+      renderHeader: CustomHeader,
+      renderCell: (params) => (
+        <div>
+          <Button>
+            {params.row.status?.toLowerCase() == 'completed' ? (
+              <IconSquareRoundedCheck color={'green'} stroke={2} onClick={() => console.log(params)} />
+            ) : (
+              <IconAlertCircle color={'#adad1d'} stroke={2} onClick={() => console.log(params)} />
+            )}
+          </Button>
+        </div>
+      )
+
+      // valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`
+    },
+    {
       field: 'transactionDate',
       headerName: 'Date',
       type: date,
@@ -62,8 +73,8 @@ export default function TransactionData({ current_month = false }) {
       renderHeader: CustomHeader,
 
       valueFormatter: (params) => {
-        const date = new Date(params); // Create a new Date object from the field value
-        return format(date, 'dd-MMM-yyyy'); // Format the date to dd-MM-yyyy
+        const date = new Date(params);
+        return format(date, 'dd-MMM-yyyy');
       }
     },
     {
@@ -81,9 +92,8 @@ export default function TransactionData({ current_month = false }) {
       width: 110,
       renderHeader: CustomHeader,
       renderCell: (params) => {
-        // Define the style based on the value
         const style = {
-          color: params.row.transactionType == 'income' ? 'green' : 'red' // green for positive, red for negative
+          color: params.row.transactionType == 'income' ? 'green' : 'red'
         };
 
         return <span style={style}>{params?.value?.toFixed(2)}</span>;
@@ -115,8 +125,8 @@ export default function TransactionData({ current_month = false }) {
       width: 150,
       renderHeader: CustomHeader,
       valueFormatter: (params) => {
-        const date = new Date(params); // Create a new Date object from the field value
-        return format(date, 'dd-MM-yyyy HH:MM'); // Format the date to dd-MM-yyyy
+        const date = new Date(params);
+        return format(date, 'dd-MM-yyyy HH:MM');
       }
       // valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`
     },
@@ -127,11 +137,19 @@ export default function TransactionData({ current_month = false }) {
       width: 150,
       renderHeader: CustomHeader,
       valueFormatter: (params) => {
-        const date = new Date(params); // Create a new Date object from the field value
-        return format(date, 'dd-MM-yyyy HH:MM'); // Format the date to dd-MM-yyyy
+        const date = new Date(params);
+        return format(date, 'dd-MM-yyyy HH:MM');
       }
 
       // valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`
+    },
+    {
+      field: 'mode',
+      headerName: 'Mode',
+      // sortable: false,
+      width: 150,
+      renderHeader: CustomHeader,
+      valueFormatter: (params) => params?.toUpperCase()
     },
     {
       field: 'delete',
@@ -150,7 +168,6 @@ export default function TransactionData({ current_month = false }) {
   ];
   useEffect(() => {
     fetchTransaction(current_month ? `?currentMonth=${true}` : '');
-    // fetchTransaction();
   }, [current_month]);
 
   return (
@@ -160,7 +177,7 @@ export default function TransactionData({ current_month = false }) {
         title={`TRANSACTION DETAILS`}
         secondary={<NewTransaction title="Add Transaction" current_month={current_month} />}
         transaction={true}
-        summaryObject={summaryObject}
+        summary={summary}
       >
         <Grid spacing={gridSpacing}>
           <Box sx={{ height: '45vh', width: '100%' }}>

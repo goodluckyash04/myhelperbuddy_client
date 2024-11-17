@@ -10,8 +10,8 @@ const trxSummarySX = {
   mx: 3
 };
 
-export default function TransactionSummary({ summaryObject }) {
-  console.log(summaryObject);
+export default function TransactionSummary({ summary }) {
+  console.log(summary);
   return (
     <Card sx={trxSummarySX}>
       <Paper sx={{ p: 2 }}>
@@ -19,23 +19,23 @@ export default function TransactionSummary({ summaryObject }) {
           {/* Left side: Expense Section */}
           <Grid item xs={12} sm={8}>
             <Typography variant="h3" align="left" color={'#c92b2b'}>
-              Expense: ₹ {summaryObject?.expense?.toFixed(2)}
+              Expense: ₹ {summary?.expense?.toFixed(2)}
             </Typography>
             <Divider sx={{ my: 1 }} />
             <Grid container spacing={2}>
               <Grid item xs={4}>
                 <Typography variant="h5">
-                  Pre. Pending Expense: <Box color={'red'}>₹ {summaryObject?.previousPending?.toFixed(2)}</Box>
+                  Pre. Pending Expense: <Box color={'red'}>₹ {summary?.previousPending?.toFixed(2)}</Box>
                 </Typography>
               </Grid>
               <Grid item xs={4}>
                 <Typography variant="h5">
-                  Pending Expense:<Box color={'#e88d48'}>₹ {summaryObject?.pending?.toFixed(2)}</Box>
+                  Pending Expense:<Box color={'#e88d48'}>₹ {summary?.pending?.toFixed(2)}</Box>
                 </Typography>
               </Grid>
               <Grid item xs={4}>
                 <Typography variant="h5">
-                  Paid Expense: <Box color={'#c92b2b'}>₹ {summaryObject?.paid?.toFixed(2)}</Box>
+                  Paid Expense: <Box color={'#c92b2b'}>₹ {summary?.paid?.toFixed(2)}</Box>
                 </Typography>
               </Grid>
             </Grid>
@@ -44,18 +44,18 @@ export default function TransactionSummary({ summaryObject }) {
           {/* Right side: Income Section */}
           <Grid item xs={12} sm={4}>
             <Typography variant="h3" align="left" color={'green'}>
-              Income: ₹ {summaryObject?.income?.toFixed(2)}
+              Income: ₹ {summary?.income?.toFixed(2)}
             </Typography>
             <Divider sx={{ my: 1 }} />
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <Typography variant="h5">
-                  EMI: <Box color={'brown'}>₹ {summaryObject?.emi?.toFixed(2)}</Box>
+                  EMI: <Box color={'brown'}>₹ {summary?.emi?.toFixed(2)}</Box>
                 </Typography>
               </Grid>
               <Grid item xs={6}>
                 <Typography variant="h5">
-                  Investment: <Box color={'green'}>₹ {summaryObject?.investment?.toFixed(2)}</Box>
+                  Investment: <Box color={'green'}>₹ {summary?.investment?.toFixed(2)}</Box>
                 </Typography>
               </Grid>
             </Grid>
@@ -67,5 +67,5 @@ export default function TransactionSummary({ summaryObject }) {
 }
 
 TransactionSummary.propTypes = {
-  summaryObject: PropTypes.object
+  summary: PropTypes.object
 };
