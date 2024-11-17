@@ -1,6 +1,8 @@
 // import { format } from 'date-fns';
 import { useNavigate } from 'react-router';
 
+// import { query_logs } from '../config/transaction';
+
 const { useState } = require('react');
 const { createContext } = require('react');
 
@@ -10,47 +12,43 @@ export default function TransactionState({ children }) {
   const [transactionDetails, setTransactionDetails] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
-  const [totalAmount, setTotalAmount] = useState(false);
+  const [summary, setSummary] = useState({});
 
-  // const convertDateToStringIST = (now) => {
-  //   const istOffset = 5.5 * 60 * 60 * 1000; // Offset in milliseconds
-  //   const istDate = new Date(now.getTime() + istOffset);
-
-  //   // Format as ISO 8601 with +05:30
-  //   const istISOString = istDate.toISOString().replace('Z', '+05:30');
-  //   return istISOString;
-  // };
+  const base_url = `${process.env.REACT_APP_SERVER_URL}/goex/transaction`;
+  const generateQuery = (queryParams) => `?${new URLSearchParams(queryParams).toString()}`;
 
   const navigate = useNavigate();
-  const fetchTransaction = async (queryParams = '') => {
+
+  const fetchTransaction = async (queryParams = {}) => {
+    // const params = new URLSearchParams(window.location.search);
+    // const log_type = params.get('logs');
+
     let headersList = {
       Authorization: localStorage.getItem('token')
     };
-
-    let response = await fetch(`${process.env.REACT_APP_SERVER_URL}/goex/transaction${queryParams}`, {
+    const url = base_url + generateQuery(queryParams);
+    let response = await fetch(url, {
       method: 'GET',
       headers: headersList
     });
 
     let data = await response.json();
-    console.log(response);
-    console.log(data);
+
     if (response.ok) {
-      setTransactionDetails(data.map((item, index) => ({ ...item, id: index + 1 })));
-      setTotalAmount(data.reduce((init, item) => (item.transactionType == 'income' ? (init += item.amount) : (init -= item.amount)), 0));
+      setTransactionDetails(data?.transactions.map((item, index) => ({ ...item, id: index + 1 })));
+      setSummary(data?.summary);
     } else if (response.status == 401) {
       navigate('/login');
     }
   };
 
   const newTransaction = async (request_body, current_month) => {
-    // const body = { ...request_body, transactionDate: convertDateToStringIST(request_body?.transactionDate) };
     let headersList = {
       Authorization: localStorage.getItem('token'),
       'Content-Type': 'application/json'
     };
 
-    let response = await fetch(`${process.env.REACT_APP_SERVER_URL}/goex/transaction`, {
+    let response = await fetch(base_url, {
       method: 'POST',
       headers: headersList,
       body: JSON.stringify(request_body)
@@ -59,19 +57,20 @@ export default function TransactionState({ children }) {
     // let data = await response.json();
     if (response.ok) {
       setDialogOpen(false);
-      fetchTransaction(current_month ? `?currentMonth=${true}` : '');
+      fetchTransaction(current_month ? { currentMonth: true } : {});
     } else if (response.status == 401) {
       navigate('/login');
     }
   };
+
   const updateTransaction = async (request_body, id, current_month) => {
     console.log('current_month', current_month);
     let headersList = {
       Authorization: localStorage.getItem('token'),
       'Content-Type': 'application/json'
     };
-
-    let response = await fetch(`${process.env.REACT_APP_SERVER_URL}/goex/transaction?id=${id}`, {
+    const url = base_url + generateQuery({ id: id });
+    let response = await fetch(url, {
       method: 'PUT',
       headers: headersList,
       body: JSON.stringify(request_body)
@@ -92,8 +91,8 @@ export default function TransactionState({ children }) {
       Authorization: localStorage.getItem('token'),
       'Content-Type': 'application/json'
     };
-
-    let response = await fetch(`${process.env.REACT_APP_SERVER_URL}/goex/transaction?id=${id}&transactionStatus=${status}`, {
+    const url = base_url + generateQuery({ id: id, transactionStatus: status });
+    let response = await fetch(url, {
       method: 'DELETE',
       headers: headersList
     });
@@ -101,7 +100,7 @@ export default function TransactionState({ children }) {
     // let data = await response.json();
     if (response.ok) {
       setDeleteDialog(false);
-      fetchTransaction(status ? `?transactionStatus=${false}` : '');
+      fetchTransaction(status ? { transactionStatus: false } : {});
     } else if (response.status == 401) {
       navigate('/login');
     }
@@ -119,7 +118,7 @@ export default function TransactionState({ children }) {
         deleteDialog,
         setDeleteDialog,
         updateTransaction,
-        totalAmount
+        summary
       }}
     >
       {children}

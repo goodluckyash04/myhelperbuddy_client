@@ -17,7 +17,7 @@ import { Formik } from 'formik';
 
 // project imports
 import AnimateButton from 'ui-component/extended/AnimateButton';
-import { CATEGORY, TRANSACTION_TYPE, CATEGORY_INCOME } from 'config/transaction';
+import { CATEGORY, TRANSACTION_TYPE, CATEGORY_INCOME, TRANSACTION_STATUS, TRANSACTION_MODE } from 'config/transaction';
 import DatePickerComponent from 'views/utilities/DatePickerComponent';
 import { useContext } from 'react';
 import { TransactionContext } from 'context/Transaction';
@@ -35,6 +35,8 @@ export default function TransactionForm({ ...others }) {
         amount: data?.amount || 0.0,
         beneficiary: data?.beneficiary || '',
         description: data?.description || '',
+        status: data?.status || 'completed',
+        mode: data?.mode || '',
         submit: null
       }}
       // enableReinitialize
@@ -57,9 +59,15 @@ export default function TransactionForm({ ...others }) {
       {({ errors, setFieldValue, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
         <form noValidate onSubmit={handleSubmit} {...others}>
           <Grid container spacing={2}>
+            {/* transaction type */}
             <Grid item xs={12} md={6} lg={6}>
               <FormControl fullWidth sx={{ my: 1 }} variant="standard">
-                <FormLabel id="demo-row-radio-buttons-group-label">Transaction Type</FormLabel>
+                <FormLabel id="demo-row-radio-buttons-group-label">
+                  Transaction Type
+                  <Box color={'red'} sx={{ display: 'inline' }}>
+                    &nbsp;*
+                  </Box>
+                </FormLabel>
                 <RadioGroup
                   row
                   aria-labelledby="demo-row-radio-buttons-group-label"
@@ -73,9 +81,15 @@ export default function TransactionForm({ ...others }) {
                 </RadioGroup>
               </FormControl>
             </Grid>
+            {/* category */}
             <Grid item xs={12} md={6} lg={6}>
               <FormControl fullWidth sx={{ my: 1 }} variant="standard" error={Boolean(touched.category && errors.category)}>
-                <InputLabel id="demo-simple-select-standard-label">Category</InputLabel>
+                <InputLabel id="demo-simple-select-standard-label">
+                  Category
+                  <Box color={'red'} sx={{ display: 'inline' }}>
+                    &nbsp;*
+                  </Box>
+                </InputLabel>
                 <Select
                   labelId="demo-simple-select-standard-label"
                   name="category"
@@ -85,7 +99,7 @@ export default function TransactionForm({ ...others }) {
                   onChange={handleChange}
                   label="category"
                 >
-                  {(values.transactionType == 'income' ? CATEGORY_INCOME : CATEGORY).map((item) => (
+                  {(values.transactionType == 'income' ? CATEGORY_INCOME : CATEGORY).sort().map((item) => (
                     <MenuItem value={item} key={item}>
                       {item?.toUpperCase()}
                     </MenuItem>
@@ -98,6 +112,7 @@ export default function TransactionForm({ ...others }) {
                 )}
               </FormControl>
             </Grid>
+            {/* transaction date */}
             <Grid item xs={12} md={6} lg={6}>
               <FormControl fullWidth sx={{ my: 1 }} variant="standard">
                 <DatePickerComponent
@@ -109,16 +124,32 @@ export default function TransactionForm({ ...others }) {
                 />
               </FormControl>
             </Grid>
+            {/* amount */}
             <Grid item xs={12} md={6} lg={6}>
               <FormControl fullWidth sx={{ my: 1 }} variant="standard" error={Boolean(touched.amount && errors.amount)}>
-                <InputLabel htmlFor="standard-adornment-amount">Amount</InputLabel>
+                <InputLabel htmlFor="standard-adornment-amount">
+                  Amount
+                  <Box color={'red'} sx={{ display: 'inline' }}>
+                    &nbsp;*
+                  </Box>
+                </InputLabel>
                 <Input
                   id="standard-adornment-amount"
                   name="amount"
                   onBlur={handleBlur}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    // Restrict to only numbers and decimals
+                    const value = e.target.value;
+                    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                      handleChange(e);
+                    }
+                  }}
                   value={values.amount}
                   startAdornment={<InputAdornment position="start">₹</InputAdornment>}
+                  inputProps={{
+                    inputMode: 'decimal', // Mobile keyboard for numbers and decimals
+                    pattern: '[0-9]*' // Allows only digits (useful for mobile devices)
+                  }}
                 />
                 {touched.amount && errors.amount && (
                   <FormHelperText error id="standard-weight-helper-text-password-login">
@@ -127,7 +158,7 @@ export default function TransactionForm({ ...others }) {
                 )}
               </FormControl>
             </Grid>
-
+            {/* beneficiary */}
             <Grid item xs={12} md={6} lg={6}>
               <FormControl fullWidth sx={{ my: 1 }} variant="standard">
                 <TextField
@@ -140,6 +171,7 @@ export default function TransactionForm({ ...others }) {
                 />
               </FormControl>
             </Grid>
+            {/* description */}
             <Grid item xs={12} md={6} lg={6}>
               <FormControl fullWidth sx={{ my: 1 }} variant="standard">
                 <TextField
@@ -152,6 +184,49 @@ export default function TransactionForm({ ...others }) {
                   maxRows={4}
                   variant="standard"
                 />
+              </FormControl>
+            </Grid>
+            {/* transaction mode */}
+            <Grid item xs={12} md={6} lg={6}>
+              <FormControl fullWidth sx={{ my: 1 }} variant="standard" error={Boolean(touched.category && errors.category)}>
+                <InputLabel id="demo-simple-select-standard-label">Transaction Mode</InputLabel>
+                <Select
+                  labelId="demo-simple-select-standard-label"
+                  name="mode"
+                  id="demo-simple-select-standard"
+                  value={values.mode}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  label="category"
+                >
+                  {TRANSACTION_MODE.map((item) => (
+                    <MenuItem value={item} key={item}>
+                      {item?.toUpperCase()}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {touched.category && errors.category && (
+                  <FormHelperText error id="standard-weight-helper-text-identifier-login">
+                    {errors.category}
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+            {/* transaction Status */}
+            <Grid item xs={12} md={6} lg={6}>
+              <FormControl fullWidth sx={{ my: 1 }} variant="standard">
+                <FormLabel id="demo-row-radio-buttons-group-label">Transaction Status</FormLabel>
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  value={values.status.toLowerCase()}
+                  onChange={handleChange}
+                  name="status"
+                >
+                  {TRANSACTION_STATUS.map((item) => (
+                    <FormControlLabel value={item} key={item} control={<Radio />} label={item?.toUpperCase()} />
+                  ))}
+                </RadioGroup>
               </FormControl>
             </Grid>
           </Grid>
