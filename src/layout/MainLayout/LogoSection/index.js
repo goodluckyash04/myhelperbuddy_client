@@ -17,7 +17,6 @@ const LogoSection = () => {
   return (
     <ButtonBase disableRipple onClick={() => dispatch({ type: MENU_OPEN, id: defaultId })} component={Link} to={config.defaultPath}>
       <Logo />
-      {/* <h2>GO-ExpenseXcel</h2> */}
     </ButtonBase>
   );
 };

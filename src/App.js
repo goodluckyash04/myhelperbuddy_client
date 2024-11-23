@@ -13,6 +13,7 @@ import themes from 'themes';
 import NavigationScroll from 'layout/NavigationScroll';
 import AuthState from 'context/Auth';
 import TransactionState from 'context/Transaction';
+import FinanceState from 'context/Finance';
 
 // ==============================|| APP ||============================== //
 
@@ -24,11 +25,13 @@ const App = () => {
       <ThemeProvider theme={themes(customization)}>
         <CssBaseline />
         <NavigationScroll>
+          <FinanceState>
             <TransactionState>
               <AuthState>
                 <Routes />
               </AuthState>
             </TransactionState>
+          </FinanceState>
         </NavigationScroll>
       </ThemeProvider>
     </StyledEngineProvider>

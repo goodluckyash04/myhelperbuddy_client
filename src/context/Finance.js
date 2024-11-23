@@ -6,9 +6,9 @@ import { useNavigate } from 'react-router';
 const { useState } = require('react');
 const { createContext } = require('react');
 
-export const TransactionContext = createContext();
+export const FinanceContext = createContext();
 
-export default function TransactionState({ children }) {
+export default function FinanceState({ children }) {
   const [transactionDetails, setTransactionDetails] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
@@ -104,7 +104,7 @@ export default function TransactionState({ children }) {
     return false;
   };
   return (
-    <TransactionContext.Provider
+    <FinanceContext.Provider
       value={{
         dialogOpen,
         setDialogOpen,
@@ -119,6 +119,6 @@ export default function TransactionState({ children }) {
       }}
     >
       {children}
-    </TransactionContext.Provider>
+    </FinanceContext.Provider>
   );
 }

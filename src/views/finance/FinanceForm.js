@@ -3,8 +3,6 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
 import Input from '@mui/material/Input';
 import TextField from '@mui/material/TextField';
 
@@ -16,32 +14,28 @@ import { Formik } from 'formik';
 
 // project imports
 import AnimateButton from 'ui-component/extended/AnimateButton';
-import { CATEGORY, TRANSACTION_TYPE, CATEGORY_INCOME, TRANSACTION_STATUS, TRANSACTION_MODE } from 'config/transaction';
 import DatePickerComponent from 'views/utilities/DatePickerComponent';
 import { useContext } from 'react';
 import { TransactionContext } from 'context/Transaction';
+import { INSTRUMENT_TYPE } from 'config/finance';
 
-export default function TransactionForm({ ...others }) {
+export default function FinanceForm({ ...others }) {
   //   const theme = useTheme();
   const { newTransaction, updateTransaction } = useContext(TransactionContext);
   const data = others?.tranId;
   return (
     <Formik
       initialValues={{
-        transactionType: data?.transactionType || 'expense',
-        category: data?.category || '',
+        instrumentType: data?.productType || 'loan',
+        instrumentName: data?.instrumentName || '',
         transactionDate: data && Object.keys(data).length > 0 ? new Date(data?.transactionDate) : new Date(),
         amount: data?.amount || 0.0,
-        beneficiary: data?.beneficiary || '',
-        description: data?.description || '',
-        status: data?.status || 'completed',
-        mode: data?.mode || '',
+        no_of_installments: data?.no_of_installments || 0,
         submit: null
       }}
       // enableReinitialize
       validationSchema={Yup.object().shape({
-        amount: Yup.number().required('Amount is required'),
-        category: Yup.string().required('Category is required')
+        amount: Yup.number().required('Amount is required')
       })}
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
         try {
@@ -62,7 +56,7 @@ export default function TransactionForm({ ...others }) {
             <Grid item xs={12} md={6} lg={6}>
               <FormControl fullWidth sx={{ my: 1 }} variant="standard">
                 <FormLabel id="demo-row-radio-buttons-group-label">
-                  Transaction Type
+                  Instrument Type
                   <Box color={'red'} sx={{ display: 'inline' }}>
                     &nbsp;*
                   </Box>
@@ -70,45 +64,27 @@ export default function TransactionForm({ ...others }) {
                 <RadioGroup
                   row
                   aria-labelledby="demo-row-radio-buttons-group-label"
-                  value={values.transactionType}
+                  value={values.instrumentType}
                   onChange={handleChange}
-                  name="transactionType"
+                  name="instrumentType"
                 >
-                  {TRANSACTION_TYPE.map((item) => (
+                  {INSTRUMENT_TYPE.map((item) => (
                     <FormControlLabel value={item} key={item} control={<Radio />} label={item?.toUpperCase()} />
                   ))}
                 </RadioGroup>
               </FormControl>
             </Grid>
-            {/* category */}
+            {/* instrumentName */}
             <Grid item xs={12} md={6} lg={6}>
-              <FormControl fullWidth sx={{ my: 1 }} variant="standard" error={Boolean(touched.category && errors.category)}>
-                <InputLabel id="demo-simple-select-standard-label">
-                  Category
-                  <Box color={'red'} sx={{ display: 'inline' }}>
-                    &nbsp;*
-                  </Box>
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-standard-label"
-                  name="category"
-                  id="demo-simple-select-standard"
-                  value={values.category}
-                  onBlur={handleBlur}
+              <FormControl fullWidth sx={{ my: 1 }} variant="standard">
+                <TextField
+                  id="standard-basic"
+                  value={values.beneficiary}
+                  name="instrumentName"
+                  label="Instrument Name"
                   onChange={handleChange}
-                  label="category"
-                >
-                  {(values.transactionType == 'income' ? CATEGORY_INCOME : CATEGORY).sort().map((item) => (
-                    <MenuItem value={item} key={item}>
-                      {item?.toUpperCase()}
-                    </MenuItem>
-                  ))}
-                </Select>
-                {touched.category && errors.category && (
-                  <FormHelperText error id="standard-weight-helper-text-identifier-login">
-                    {errors.category}
-                  </FormHelperText>
-                )}
+                  variant="standard"
+                />
               </FormControl>
             </Grid>
             {/* transaction date */}
@@ -157,75 +133,19 @@ export default function TransactionForm({ ...others }) {
                 )}
               </FormControl>
             </Grid>
-            {/* beneficiary */}
-            <Grid item xs={12} md={6} lg={6}>
-              <FormControl fullWidth sx={{ my: 1 }} variant="standard">
-                <TextField
-                  id="standard-basic"
-                  value={values.beneficiary}
-                  name="beneficiary"
-                  label="Beneficiary"
-                  onChange={handleChange}
-                  variant="standard"
-                />
-              </FormControl>
-            </Grid>
-            {/* description */}
+
+            {/* no_of_installments */}
             <Grid item xs={12} md={6} lg={6}>
               <FormControl fullWidth sx={{ my: 1 }} variant="standard">
                 <TextField
                   id="standard-multiline-flexible"
-                  value={values.description}
-                  name="description"
+                  type="number"
+                  value={values.no_of_installments}
+                  name="no_of_installments"
                   onChange={handleChange}
-                  label="Description"
-                  multiline
-                  maxRows={4}
+                  label="No of Installments"
                   variant="standard"
                 />
-              </FormControl>
-            </Grid>
-            {/* transaction mode */}
-            <Grid item xs={12} md={6} lg={6}>
-              <FormControl fullWidth sx={{ my: 1 }} variant="standard" error={Boolean(touched.category && errors.category)}>
-                <InputLabel id="demo-simple-select-standard-label">Transaction Mode</InputLabel>
-                <Select
-                  labelId="demo-simple-select-standard-label"
-                  name="mode"
-                  id="demo-simple-select-standard"
-                  value={values.mode}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  label="category"
-                >
-                  {TRANSACTION_MODE.map((item) => (
-                    <MenuItem value={item} key={item}>
-                      {item?.toUpperCase()}
-                    </MenuItem>
-                  ))}
-                </Select>
-                {touched.category && errors.category && (
-                  <FormHelperText error id="standard-weight-helper-text-identifier-login">
-                    {errors.category}
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Grid>
-            {/* transaction Status */}
-            <Grid item xs={12} md={6} lg={6}>
-              <FormControl fullWidth sx={{ my: 1 }} variant="standard">
-                <FormLabel id="demo-row-radio-buttons-group-label">Transaction Status</FormLabel>
-                <RadioGroup
-                  row
-                  aria-labelledby="demo-row-radio-buttons-group-label"
-                  value={values.status.toLowerCase()}
-                  onChange={handleChange}
-                  name="status"
-                >
-                  {TRANSACTION_STATUS.map((item) => (
-                    <FormControlLabel value={item} key={item} control={<Radio />} label={item?.toUpperCase()} />
-                  ))}
-                </RadioGroup>
               </FormControl>
             </Grid>
           </Grid>

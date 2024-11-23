@@ -1,5 +1,6 @@
+/* eslint-disable*/
 import { Grid } from '@mui/material';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { format } from 'date-fns';
@@ -10,30 +11,35 @@ import { gridSpacing } from 'store/constant';
 import Breadcrumbs from 'ui-component/extended/Breadcrumbs';
 import { TransactionContext } from 'context/Transaction';
 import { date } from 'yup';
-import NewTransaction from './NewTransaction';
 import { CustomHeader } from 'views/utilities/CustomeTableHeader';
-import TransactionDeleteDialog from './TransactionDeleteDialog';
-import TransactionModal from './TransactionModal';
-import { TxnAmount, TxnDeleteButton, TxnStatusButton } from '../config/ExtraComponents';
+// import TransactionDeleteDialog from './TransactionDeleteDialog';
 import PropTypes from 'prop-types';
+import { TxnAmount, TxnDeleteButton, TxnStatusButton } from 'views/transaction/config/ExtraComponents';
+import { useLocation } from 'react-router';
+import NewFinance from './NewFinance';
+import FinanceModal from './FinanceModal';
 
 // ==============================|| TRANSACTION ||============================== //
 
-export default function TransactionData({ currentMonth = false }) {
-  const { transactionDetails, fetchTransaction, deleteRestoreTransaction, deleteDialog, setDeleteDialog, summary } =
-    useContext(TransactionContext);
-  const [tranId, setTransactionId] = useState({});
+export default function FinancialData() {
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const product_id = query.get('id') || '';
+  console.log(product_id);
+  const currentMonth = false;
+  const { transactionDetails, fetchTransaction, setDeleteDialog, summary } = useContext(TransactionContext);
+  // const [tranId, setTransactionId] = useState({});
   const { setDialogOpen } = React.useContext(TransactionContext);
 
   const onDeleteButton = (row) => {
     console.log(row);
     setDeleteDialog(true);
-    setTransactionId(row);
+    // setTransactionId(row);
   };
 
   const rowClick = (params) => {
     setDialogOpen(true);
-    setTransactionId(params.row);
+    // setTransactionId(params.row);
   };
 
   const valueFormat = (params, value_type) => {
@@ -130,6 +136,17 @@ export default function TransactionData({ currentMonth = false }) {
     }
   ];
 
+  const finacialSummary = {
+    type: 'loan',
+    startDate: '20 Nov 2024',
+    endDate: '20 OCT 2025',
+    status: 'Active',
+    totalAmount: 20000,
+    installments: 8,
+    remainingInstallments: 2,
+    paidAmount: 2000
+  };
+
   useEffect(() => {
     fetchTransaction(currentMonth ? `?currentMonth=${true}` : '');
   }, [currentMonth]);
@@ -138,10 +155,10 @@ export default function TransactionData({ currentMonth = false }) {
     <>
       <Breadcrumbs card={true} divider={true} navigation={true} />
       <MainCard
-        title={`TRANSACTION DETAILS`}
-        secondary={<NewTransaction title="Add Transaction" current_month={currentMonth} />}
+        title={`INSTRUMENT DETAILS`}
+        secondary={<NewFinance title="back" current_month={currentMonth} />}
         transaction={true}
-        summary={summary}
+        finacialSummary={finacialSummary}
       >
         <Grid spacing={gridSpacing}>
           <Box sx={{ height: '45vh', width: '100%' }}>
@@ -175,8 +192,8 @@ export default function TransactionData({ currentMonth = false }) {
         </Grid>
       </MainCard>
 
-      <TransactionDeleteDialog {...{ deleteDialog, setDeleteDialog, tranId, deleteRestoreTransaction }} />
-      <TransactionModal {...{ tranId, currentMonth }} />
+      {/* <TransactionDeleteDialog {...{ deleteDialog, setDeleteDialog, tranId, deleteRestoreTransaction }} /> */}
+      <FinanceModal {...{ currentMonth }} />
     </>
   );
 }

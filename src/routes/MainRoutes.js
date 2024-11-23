@@ -8,11 +8,13 @@ import Loadable from 'ui-component/Loadable';
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
 
 // utilities routing
-const TransactionData = Loadable(lazy(() => import('views/transaction')));
+const Transaction = Loadable(lazy(() => import('views/transaction')));
+const Finance = Loadable(lazy(() => import('views/finance')));
+const FinancialDetails = Loadable(lazy(() => import('views/finance/FinancialData')));
 const PreferenceComponent = Loadable(lazy(() => import('views/preference')));
 
 const UtilsColor = Loadable(lazy(() => import('views/utilities/Color')));
-const UtilsShadow = Loadable(lazy(() => import('views/utilities/Shadow')));
+// const UtilsShadow = Loadable(lazy(() => import('views/utilities/Shadow')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -29,15 +31,24 @@ const MainRoutes = {
       children: [
         {
           path: 'transactions',
-          element: <TransactionData />
+          element: <Transaction />
+        },
+        {
+          path: 'finance',
+          children: [
+            {
+              path: '',
+              element: <Finance />
+            },
+            {
+              path: 'details',
+              element: <FinancialDetails />
+            }
+          ]
         },
         {
           path: 'task',
           element: <UtilsColor />
-        },
-        {
-          path: 'finance',
-          element: <UtilsShadow />
         }
       ]
     },

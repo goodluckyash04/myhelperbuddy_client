@@ -6,6 +6,7 @@ import { IconCurrencyRupee } from '@tabler/icons-react';
 import { useTheme } from '@mui/material/styles';
 import { Card, CardContent, CardHeader, Typography, Chip } from '@mui/material';
 import TransactionSummary from 'views/transaction/trasactionDetails/TransactionSummary';
+import FinanceSummary from 'views/finance/FinanceSummary';
 
 // constant
 const headerSX = {
@@ -82,7 +83,8 @@ const MainCard = forwardRef(
         )}
         {/* content & header divider */}
 
-        {transaction && <TransactionSummary summary={others?.summary} />}
+        {transaction &&
+          (others?.summary ? <TransactionSummary summary={others?.summary} /> : <FinanceSummary summary={others?.finacialSummary} />)}
 
         {/* card content */}
         {content && (

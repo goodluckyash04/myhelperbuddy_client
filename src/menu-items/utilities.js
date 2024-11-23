@@ -13,7 +13,7 @@ import {
 } from '@tabler/icons-react';
 
 const date = new Date();
-const currentMonth = date.toLocaleString('default', { month: 'short', year: '2-digit' });
+const currentMonth = date.toLocaleString('default', { month: 'long', year: '2-digit' });
 
 // ==============================|| UTILITIES MENU ITEMS ||============================== //
 
@@ -30,7 +30,7 @@ const utilities = {
       children: [
         {
           id: 'current_transaction',
-          title: currentMonth?.toUpperCase(),
+          title: currentMonth,
           type: 'item',
           url: '/utils/transactions?logs=current_month',
           icon: IconCalendar,
@@ -54,6 +54,32 @@ const utilities = {
         }
       ]
     },
+
+    {
+      id: 'finance',
+      title: 'FINANCE',
+      type: 'collapse',
+      icon: IconCashBanknote,
+
+      children: [
+        {
+          id: 'loan',
+          title: 'Loan',
+          type: 'item',
+          url: '/utils/finance?q=loan',
+          icon: IconBuildingBank,
+          breadcrumbs: true
+        },
+        {
+          id: 'investment',
+          title: 'Investment',
+          type: 'item',
+          url: '/utils/finance?q=investment',
+          icon: IconCashBanknote,
+          breadcrumbs: true
+        }
+      ]
+    },
     {
       id: 'task',
       title: 'TASK',
@@ -67,23 +93,6 @@ const utilities = {
           type: 'item',
           url: '/utils/task',
           icon: IconList,
-          breadcrumbs: true
-        }
-      ]
-    },
-    {
-      id: 'finance',
-      title: 'FINANCE',
-      type: 'collapse',
-      icon: IconCashBanknote,
-
-      children: [
-        {
-          id: 'loan',
-          title: 'Loan',
-          type: 'item',
-          url: '/utils/finance',
-          icon: IconBuildingBank,
           breadcrumbs: true
         }
       ]
